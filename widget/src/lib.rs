@@ -1,6 +1,5 @@
-use serde_json::Error;
-use serde_json::Value;
-
+use chrono::prelude::*;
+use chrono_tz::Europe::Zurich;
 use schemars::{schema_for, JsonSchema};
 use serde::Deserialize;
 
@@ -10,11 +9,9 @@ wit_bindgen::generate!({
 });
 
 #[derive(JsonSchema, Deserialize)]
-struct WidgetConfig {
-    city: String,
-}
+struct WidgetConfig {}
 
-const WIDGET_NAME: &str = "Rust Widget Template";
+const WIDGET_NAME: &str = "Time";
 
 struct MyWidget;
 
@@ -23,50 +20,20 @@ impl Widget for MyWidget {
         WIDGET_NAME.into()
     }
 
-    fn run(config: WidgetContext) -> WidgetResult {
-        // Widgets can log to the console
-        logging::log(logging::Level::Info, WIDGET_NAME, "Widget run started");
-
-        // Widgets can handle the case where no config is provided
-        if "{}" == config.config {
+    fn run(_: WidgetContext) -> WidgetResult {
+        let now = clocks::now();
+        let naive = NaiveDateTime::from_timestamp_opt(now.seconds as i64, 0);
+        if naive.is_none() {
             return WidgetResult {
-                data: "No config provided".into(),
+                data: "Invalid timestamp".into(),
             };
         }
 
-        // Widgets can parse their config with ease using serde
-        let config: WidgetConfig =
-            serde_json::from_str(&config.config).expect("Failed to parse config");
-
-        // Widgets can make network requests
-        let response = http::request(
-            http::Method::Get,
-            format!(
-                "https://aareguru.existenz.ch/v2018/today?city={}",
-                config.city
-            )
-            .as_str(),
-            None,
-        );
-        let Ok(response) = response else {
-            return WidgetResult {
-                data: "Failed to make network request".into(),
-            };
-        };
-
-        if 200 != response.status {
-            return WidgetResult {
-                data: format!("Response status != 200: {}", response.status),
-            };
+        let datetime = Zurich.from_utc_datetime(&naive.unwrap());
+        let newdate = datetime.format("%Y-%m-%d %H:%M:%S");
+        WidgetResult {
+            data: newdate.to_string(),
         }
-
-        let data: Result<Value, Error> = serde_json::from_slice(response.bytes.as_slice());
-        let result = match data {
-            Ok(data) => format!("Aare Temperature in {}: {} C", config.city, data["aare"]),
-            Err(_) => "Response from AareGuru could not be parsed".into(),
-        };
-
-        WidgetResult { data: result }
     }
 
     fn get_config_schema() -> wit_bindgen::rt::string::String {

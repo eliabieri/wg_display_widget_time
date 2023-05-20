@@ -22,7 +22,7 @@ impl Widget for MyWidget {
 
     fn run(_: WidgetContext) -> WidgetResult {
         let now = clocks::now();
-        let naive = NaiveDateTime::from_timestamp_opt(now.seconds as i64, 0);
+        let naive = NaiveDateTime::from_timestamp_opt(now.seconds as i64, now.nanoseconds);
         if naive.is_none() {
             return WidgetResult {
                 data: "Invalid timestamp".into(),
@@ -42,7 +42,7 @@ impl Widget for MyWidget {
     }
 
     fn get_version() -> wit_bindgen::rt::string::String {
-        "1.0.0".into()
+        "1.0.1".into()
     }
 }
 

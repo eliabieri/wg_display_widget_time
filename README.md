@@ -1,4 +1,4 @@
-# Current date/time widget for the WG Display
+# Current time widget for the WG Display
 
 ## 🛠️ Development
 

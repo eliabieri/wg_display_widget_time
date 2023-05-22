@@ -42,7 +42,11 @@ impl Widget for MyWidget {
     }
 
     fn get_version() -> wit_bindgen::rt::string::String {
-        "1.0.1".into()
+        "1.0.2".into()
+    }
+
+    fn get_run_update_cycle_seconds() -> u32 {
+        1
     }
 }
 

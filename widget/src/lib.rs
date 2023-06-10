@@ -30,7 +30,7 @@ impl Widget for MyWidget {
         }
 
         let datetime = Zurich.from_utc_datetime(&naive.unwrap());
-        let newdate = datetime.format("%Y-%m-%d %H:%M:%S");
+        let newdate = datetime.format("%H:%M:%S %d.%m.%Y");
         WidgetResult {
             data: newdate.to_string(),
         }

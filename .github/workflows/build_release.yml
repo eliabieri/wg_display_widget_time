@@ -21,7 +21,7 @@ jobs:
       with:
         submodules: recursive
     - name: Install wasm-tools
-      run: cargo install wasm-tools
+      run: cargo install wasm-tools --version 1.0.33
     - name: Validate WIT
       run: wasm-tools component wit wg_display_widget_wit/wit -d widget
     - name: Add WASM target

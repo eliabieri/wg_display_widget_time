@@ -2,6 +2,7 @@ use chrono::prelude::*;
 use chrono_tz::Europe::Zurich;
 use schemars::{schema_for, JsonSchema};
 use serde::Deserialize;
+use widget::widget::clocks;
 
 wit_bindgen::generate!({
     path: "../wg_display_widget_wit/wit",
